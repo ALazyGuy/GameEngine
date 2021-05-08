@@ -1,6 +1,7 @@
 package com.ltp.engine.core;
 
 import com.ltp.engine.core.exception.GameException;
+import com.ltp.engine.core.exception.validator.ExceptionalValidator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,7 +63,7 @@ public final class Game {
 
     /**
      * terminate - Terminate the game, all game subsystems. Method {@link Game#start()} must be called before
-     * 
+     *
      * @throws Throwable - will be thrown on termination before {@link Game#init()} and {@link Game#start()}
      */
     public static void terminate() throws Throwable {

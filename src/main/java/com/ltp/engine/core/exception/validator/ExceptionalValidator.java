@@ -1,4 +1,4 @@
-package com.ltp.engine.core;
+package com.ltp.engine.core.exception.validator;
 
 import org.apache.logging.log4j.LogManager;
 
