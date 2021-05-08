@@ -1,5 +1,6 @@
 package com.ltp.engine.core;
 
+import com.ltp.engine.core.exception.GameException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,32 +22,51 @@ public final class Game {
 
     /** running - true if game is running, false otherwise */
     @Getter
-    private static boolean running;
+    private static boolean running = false;
     /** initialized - true if game data is initialized, false otherwise */
     @Getter
-    private static boolean initialized;
+    private static boolean initialized = false;
 
 
-    /** init - Initialize game data, initializing other game subsystems */
-    public static void init(){
-        if(initialized) return;
+    /**
+     * init - Initialize game data, initializing other game subsystems
+     *
+     * @throws Throwable - will be thrown on double initialization
+     */
+    public static void init() throws Throwable {
+        ExceptionalValidator.validate(!initialized, GameException.class, ExceptionalValidator.ValidationType.SOFT, "Double initialization found");
 
         initialized = true;
         LOGGER.info("Game initialized successfully");
     }
 
-    /** start - Start the game. Method {@link Game#init()} must be called before */
-    public static void start(){
-        if(running || !initialized) return;
+    /**
+     * start - Start the game. Method {@link Game#init()} must be called before
+     *
+     * @throws Throwable - will be thrown on double start or start before {@link Game#init()}
+     */
+    public static void start() throws Throwable {
+        ExceptionalValidator.validate(!running,
+                GameException.class,
+                ExceptionalValidator.ValidationType.SOFT,
+                "Double start found");
+        ExceptionalValidator.validate(initialized,
+                GameException.class,
+                ExceptionalValidator.ValidationType.RUDE,
+                "Unable to start game, until it's not initialized ");
 
         running = true;
 
         LOGGER.info("Game started successfully");
     }
 
-    /** terminate - Terminate the game, all game subsystems. Method {@link Game#start()} must be called before */
-    public static void terminate(){
-        if(!running) return;
+    /**
+     * terminate - Terminate the game, all game subsystems. Method {@link Game#start()} must be called before
+     * 
+     * @throws Throwable - will be thrown on termination before {@link Game#init()} and {@link Game#start()}
+     */
+    public static void terminate() throws Throwable {
+        ExceptionalValidator.validate(running, GameException.class, ExceptionalValidator.ValidationType.RUDE, "Unable to terminate game, if it isn't running");
 
         initialized = false;
         running = false;
